@@ -1,4 +1,4 @@
-import {Post} from "@/app/types/Post";
+import {Post} from "@/app/_types/Post";
 
 export const posts: Post[] = [
   {

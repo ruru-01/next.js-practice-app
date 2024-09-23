@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react';
 import {Card, CardContent, Typography, Grid2, Box, Container, Chip, CardActionArea} from '@mui/material';
 import parse from 'html-react-parser';
-import {Post} from "@/app/types/Post";
+import {Post} from "@/app/_types/Post";
 import {API_BASE_URL} from "@/app/Constants";
 import Link from 'next/link';
 
