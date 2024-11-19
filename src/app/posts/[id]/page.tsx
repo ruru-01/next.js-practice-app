@@ -33,6 +33,9 @@ export default function Page() {
         setPost(data)
         setLoading(false)
     }
+    if (!post) {
+        <div>記事が見つかりません</div>
+    }
 
     fetcher()
   }, [id]);
@@ -48,11 +51,11 @@ export default function Page() {
   return (
       <Container maxWidth="md" sx={{ pb: 5 }}>
         <Card>
-            {post?.thumbnail && (
+            {post.thumbnail && (
               <CardMedia
                   component="img"
-                  image={post?.thumbnail.url}
-                  alt={post?.title || 'サムネイル'}
+                  image={post.thumbnail.url}
+                  alt={post.title || 'サムネイル'}
               />
             )}
         </Card>
@@ -65,10 +68,10 @@ export default function Page() {
               }}
           >
             <Typography sx={{ fontSize: '13px', color: '#888888' }}>
-              {post?.createdAt ? formatDate(post?.createdAt) : '日付なし'}
+              {post.createdAt ? formatDate(post.createdAt) : '日付なし'}
             </Typography>
             <Box>
-              {post?.categories?.map((category) => (
+              {post.categories?.map((category) => (
                   <Box sx={{ mr: 1, display: 'inline-block' }}>
                     <Chip
                         key={category.id}
@@ -82,10 +85,10 @@ export default function Page() {
             </Box>
           </Box>
           <Typography sx={{ fontSize: '24px', padding: '15px 0' }}>
-            {post?.title || 'タイトルなし'}
+            {post.title || 'タイトルなし'}
           </Typography>
           <Typography sx={{ fontSize: '16px' }}>
-            {post?.content ? parse(post.content) : '本文なし'}
+            {post.content ? parse(post.content) : '本文なし'}
           </Typography>
         </Box>
       </Container>
