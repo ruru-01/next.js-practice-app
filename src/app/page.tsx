@@ -3,12 +3,11 @@
 import React, {useEffect, useState} from 'react';
 import {Card, CardContent, Typography, Grid2, Box, Container, Chip, CardActionArea} from '@mui/material';
 import parse from 'html-react-parser';
-import {Post} from "@/app/_types/Post";
-import {API_BASE_URL} from "@/app/Constants";
+import { MicroCmsPost, Post } from "@/app/_types/MicroCmsPost"
 import Link from 'next/link';
 
 export default function Page() {
-  const [ posts, setPosts ] = useState<Post[]>([]);
+  const [ posts, setPosts ] = useState<MicroCmsPost[]>([]);
   const [ loading, setLoading ] = useState<boolean>(false);
   const formatDate = (dateString: number) => {
     const date = new Date(dateString);
@@ -21,11 +20,15 @@ export default function Page() {
   // APIでpostsを取得する処理をuseEffectで実行する
   useEffect(() => {
     const fetcher = async () => {
-      const res = await fetch(`${API_BASE_URL}/posts`)
-      const { posts } = await res.json()
-      setPosts(posts)
-      setLoading(false)
+      const res = await fetch('https://f15a9rs0qh.microcms.io/api/v1/posts', { // 管理画面で取得したエンドポイント
+            headers: {
+                    'X-MICROCMS-API-KEY' : process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string, // 管理画面で取得したAPIキー
+                },
+          })
+      const { contents } = await res.json()
+      setPosts(contents)
     }
+
     fetcher()
   }, []);
 
@@ -58,15 +61,13 @@ export default function Page() {
                               color: '#888888'
                             }}
                         >
-                          {formatDate(Date.parse(post.createdAt))}
+                          {post.createdAt ? formatDate(Date.parse(post.createdAt)) : '日付なし'}
                         </Typography>
                         <Box>
-                          {post.categories.map((category, index) => (
+                          {post.categories && Array.isArray(post.categories) && post.categories.map((category, index) => (
                               <Box key={index} sx={{ mr: 1, display: 'inline-block' }}>
                                 <Chip
-                                    label={category}
-                                    key={index}
-                                    color="primary"
+                                    label={category.name || '不明なカテゴリ'}                                    color="primary"
                                     variant="outlined"
                                     sx={{ borderRadius: 1 }}
                                 />
@@ -74,7 +75,7 @@ export default function Page() {
                           ))}
                         </Box>
                       </Box>
-                      <Typography sx={{ fontSize: '24px' }}>{post.title}</Typography>
+                      <Typography sx={{ fontSize: '24px' }}>{post.title || 'タイトルなし'}</Typography>
                       <Typography
                           sx={{
                             pt: 2,
@@ -84,7 +85,7 @@ export default function Page() {
                             WebkitLineClamp: 2,
                           }}
                       >
-                        {parse(post.content)}
+                        {post.content ? parse(post.content) : '本文なし'}
                       </Typography>
                     </CardContent>
                   </Card>

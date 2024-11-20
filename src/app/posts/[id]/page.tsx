@@ -1,17 +1,16 @@
 'use client';
 
 import React, {useEffect, useState} from 'react'
-import { Card, Typography, Box, Container, Chip, CardMedia } from '@mui/material';
+import { Container, Card, CardMedia, Typography, Box, Chip } from '@mui/material';
 import parse from 'html-react-parser';
-import {Post} from "@/app/_types/Post";
-import {API_BASE_URL} from "@/app/Constants";
+import { MicroCmsPost, Post } from "@/app/_types/Post";
 import {useParams} from "next/navigation";
 
 export default function Page() {
   const params = useParams() as { id: string };
   const { id } = params;
 
-  const [ post, setPosts ] = useState<Post | null>(null);
+  const [ post, setPost ] = useState<MicroCmsPost | null>(null);
   const [ loading, setLoading ] = useState<boolean>(false);
 
   const formatDate = (dateString: string | number) => {
@@ -24,14 +23,20 @@ export default function Page() {
 
   // APIでpostsを取得する処理をuseEffectで実行する
   useEffect(() => {
-    if (!id) return;
     const fetcher = async () => {
-      setLoading(true)
-      const res = await fetch(`${API_BASE_URL}/posts/${id}`)
-      const { post } = await res.json()
-      setPosts(post)
-      setLoading(false)
+        const res = await fetch(`https://f15a9rs0qh.microcms.io/api/v1/posts/${id}`, { // 管理画面で取得したエンドポイント
+            headers: { // fetch関数の第二引数にheaderを設定し、その中にAPIを設定
+                'X-MICROCMS-API-KEY': process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string, // 管理画面で取得したAPIキー
+            },
+        })
+        const data = await res.json()
+        setPost(data)
+        setLoading(false)
     }
+    if (!post) {
+        <div>記事が見つかりません</div>
+    }
+
     fetcher()
   }, [id]);
 
@@ -46,11 +51,13 @@ export default function Page() {
   return (
       <Container maxWidth="md" sx={{ pb: 5 }}>
         <Card>
-          <CardMedia
-              component="img"
-              image={post?.thumbnailUrl}
-              alt={post?.title}
-          />
+            {post.thumbnail && (
+              <CardMedia
+                  component="img"
+                  image={post.thumbnail.url}
+                  alt={post.title || 'サムネイル'}
+              />
+            )}
         </Card>
         <Box sx={{ padding: '20px' }}>
           <Box
@@ -61,13 +68,14 @@ export default function Page() {
               }}
           >
             <Typography sx={{ fontSize: '13px', color: '#888888' }}>
-              {formatDate(post?.createdAt || 0)}
+              {post.createdAt ? formatDate(post.createdAt) : '日付なし'}
             </Typography>
             <Box>
-              {post?.categories?.map((category, index) => (
-                  <Box key={index} sx={{ mr: 1, display: 'inline-block' }}>
+              {post.categories?.map((category) => (
+                  <Box sx={{ mr: 1, display: 'inline-block' }}>
                     <Chip
-                        label={category}
+                        key={category.id}
+                        label={category.name || '不明なカテゴリ'}
                         color="primary"
                         variant="outlined"
                         sx={{ borderRadius: 1 }}
@@ -77,10 +85,10 @@ export default function Page() {
             </Box>
           </Box>
           <Typography sx={{ fontSize: '24px', padding: '15px 0' }}>
-            {post?.title}
+            {post.title || 'タイトルなし'}
           </Typography>
           <Typography sx={{ fontSize: '16px' }}>
-            {parse(post?.content || '')}
+            {post.content ? parse(post.content) : '本文なし'}
           </Typography>
         </Box>
       </Container>
