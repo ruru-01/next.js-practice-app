@@ -3,7 +3,7 @@
 import React, {useEffect, useState} from 'react'
 import { Container, Card, CardMedia, Typography, Box, Chip } from '@mui/material';
 import parse from 'html-react-parser';
-import { MicroCmsPost, Post } from "@/app/_types/Post";
+import { MicroCmsPost } from "@/app/_types/Post";
 import {useParams} from "next/navigation";
 
 export default function Page() {
@@ -11,7 +11,7 @@ export default function Page() {
   const { id } = params;
 
   const [ post, setPost ] = useState<MicroCmsPost | null>(null);
-  const [ loading, setLoading ] = useState<boolean>(false);
+  const [ loading, setLoading ] = useState<boolean>(true);
 
   const formatDate = (dateString: string | number) => {
     const date = new Date(dateString);
@@ -38,6 +38,7 @@ export default function Page() {
     }
 
     fetcher()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   if (loading) {
@@ -51,7 +52,7 @@ export default function Page() {
   return (
       <Container maxWidth="md" sx={{ pb: 5 }}>
         <Card>
-            {post.thumbnail && (
+            {post?.thumbnail && (
               <CardMedia
                   component="img"
                   image={post.thumbnail.url}
@@ -68,13 +69,12 @@ export default function Page() {
               }}
           >
             <Typography sx={{ fontSize: '13px', color: '#888888' }}>
-              {post.createdAt ? formatDate(post.createdAt) : '日付なし'}
+            {post?.createdAt ? formatDate(Date.parse(post.createdAt)) : '日付なし'}
             </Typography>
             <Box>
-              {post.categories?.map((category) => (
-                  <Box sx={{ mr: 1, display: 'inline-block' }}>
+              {post?.categories.map((category) => (
+                  <Box key={category.id} sx={{ mr: 1, display: 'inline-block' }}>
                     <Chip
-                        key={category.id}
                         label={category.name || '不明なカテゴリ'}
                         color="primary"
                         variant="outlined"
@@ -85,10 +85,10 @@ export default function Page() {
             </Box>
           </Box>
           <Typography sx={{ fontSize: '24px', padding: '15px 0' }}>
-            {post.title || 'タイトルなし'}
+            {post?.title || 'タイトルなし'}
           </Typography>
           <Typography sx={{ fontSize: '16px' }}>
-            {post.content ? parse(post.content) : '本文なし'}
+            {post?.content ? parse(post.content) : '本文なし'}
           </Typography>
         </Box>
       </Container>
