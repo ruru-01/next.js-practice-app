@@ -3,12 +3,12 @@
 import React, {useEffect, useState} from 'react';
 import {Card, CardContent, Typography, Grid2, Box, Container, Chip, CardActionArea} from '@mui/material';
 import parse from 'html-react-parser';
-import { MicroCmsPost, Post } from "@/app/_types/MicroCmsPost"
+import { MicroCmsPost } from './_types/Post';
 import Link from 'next/link';
 
 export default function Page() {
   const [ posts, setPosts ] = useState<MicroCmsPost[]>([]);
-  const [ loading, setLoading ] = useState<boolean>(false);
+  const [ loading ] = useState<boolean>(false);
   const formatDate = (dateString: number) => {
     const date = new Date(dateString);
     const year = date.getFullYear();
@@ -36,7 +36,7 @@ export default function Page() {
     return <div>読み込み中...</div>
   }
 
-  if (!loading && !posts.length) {
+  if (!loading && (!posts || posts.length === 0)) {
     return <div>記事が見つかりません</div>
   }
 
@@ -64,10 +64,11 @@ export default function Page() {
                           {post.createdAt ? formatDate(Date.parse(post.createdAt)) : '日付なし'}
                         </Typography>
                         <Box>
-                          {post.categories && Array.isArray(post.categories) && post.categories.map((category, index) => (
-                              <Box key={index} sx={{ mr: 1, display: 'inline-block' }}>
+                          {post.categories.map((category) => (
+                              <Box key={category.id} sx={{ mr: 1, display: 'inline-block' }}>
                                 <Chip
-                                    label={category.name || '不明なカテゴリ'}                                    color="primary"
+                                    label={category.name || '不明なカテゴリ'}
+                                     color="primary"
                                     variant="outlined"
                                     sx={{ borderRadius: 1 }}
                                 />

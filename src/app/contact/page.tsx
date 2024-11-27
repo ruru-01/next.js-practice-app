@@ -20,7 +20,7 @@ export default function Page() {
 
   // バリデーション
   const valid = () => {
-    let errorMessage: Errors = {};
+    const errorMessage: Errors = {};
 
     if (!name) {
       errorMessage.name = "お名前は必須です。";
