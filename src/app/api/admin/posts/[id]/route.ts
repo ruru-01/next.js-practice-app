@@ -92,3 +92,27 @@ export const PUT = async (
       return NextResponse.json({ status: error.message }, { status:400 })
   }
 }
+
+// DELETEという命名にすることで、DELETEリクエストの時にこの関数が呼ばれる
+export const DLETE = async (
+  request: NextRequest,
+  { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
+) => {
+  // paramsの中にidが入っているため、それを取り出す
+  const { id } = params
+
+  try {
+    // idを指定してPostを削除
+    await prisma.post.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
+
+    // レスポンスを返す
+    return NextResponse.json({ status: 'OK' }, { status: 200 })
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ status: error.message }, { status: 400 })
+  }
+}
