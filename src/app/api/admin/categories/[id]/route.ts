@@ -1,6 +1,4 @@
 import { PrismaClient } from "@prisma/client/extension";
-import exp from "constants";
-import { exportTraceState } from "next/dist/trace";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient()
