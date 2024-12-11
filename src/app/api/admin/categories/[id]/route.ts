@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client/extension";
+import exp from "constants";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient()
@@ -52,6 +53,30 @@ export const PUT = async (
 
     // レスポンスを返す
     return NextResponse.json({ status: 'OK', category }, { status: 200 })
+  } catch (error) {
+    if (error instanceof Error)
+      return NextResponse.json({ status: error.message }, { status: 400 })
+  }
+}
+
+// DELETEという命名にする事で、DELETEリクエストの時にこの関数が呼ばれる
+export const DELETE = async (
+  request: NextRequest,
+  { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
+) => {
+  // paramsの中にidが入っているため、それを取り出す
+  const { id } = params
+
+  try {
+    // idを指定してCategoryを削除
+    await prisma.category.delete({
+      where: {
+        id: parseInt(id),
+      },
+    })
+
+    // レスポンスを返す
+    return NextResponse.json({ status: 'OK' }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
       return NextResponse.json({ status: error.message }, { status: 400 })
