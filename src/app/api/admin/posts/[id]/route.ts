@@ -94,7 +94,7 @@ export const PUT = async (
 }
 
 // DELETEという命名にすることで、DELETEリクエストの時にこの関数が呼ばれる
-export const DLETE = async (
+export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
 ) => {

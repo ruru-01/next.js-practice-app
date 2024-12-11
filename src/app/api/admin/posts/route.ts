@@ -58,10 +58,10 @@ export const POST = async (request: Request, context: any) => {
 
     // 記事とカテゴリーの中間テーブルのレコードをDBに生成
     // 本来複数同時生成には、createManyというメソッドがあるが、sqliteではcreateManyが使えないためfor文1つずつ実施する
-    for (const catefory of categories) {
+    for (const category of categories) {
       await prisma.postCaregory.create({
         data: {
-          categoryId: catefory.id,
+          categoryId: category.id,
           postId: data.id,
         },
       })
