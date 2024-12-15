@@ -1,5 +1,6 @@
-import { PrismaClient } from "@prisma/client/extension";
-import { NextResponse } from "next/server";
+// import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient()
 
@@ -8,9 +9,10 @@ export const GET = async (request: NextRequest) => {
     // カテゴリー一覧をDBから取得
     const categories = await prisma.category.findMany({
       orderBy: {
-        createdAd: 'desc'
+        createdAt: 'desc'
       },
     })
+
 
     // レスポンスを返す
     return NextResponse.json({ status: 'OK', categories }, { status: 200 })
@@ -26,7 +28,7 @@ interface CreateCategoryRequestBody {
 }
 
 // POSTという命名にすることで、POSTリクエストの時にこの関数が呼ばれる
-export const POST = async (request: Request, context: any) => {
+export const POST = async (request: NextRequest) => {
   try {
     // リクエストのbodyを取得
     const body = await request.json()

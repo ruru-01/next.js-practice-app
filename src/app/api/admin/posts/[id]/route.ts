@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient()
@@ -68,7 +68,7 @@ export const PUT = async (
     })
 
     // 一旦記事とカテゴリーの中間テーブルのレコードを全て削除
-    await prisma.postCaregory.deleteMany({
+    await prisma.postCategory.deleteMany({
       where: {
         postId: parseInt(id),
       },
@@ -77,7 +77,7 @@ export const PUT = async (
     // 記事とカテゴリーの中間テーブルのレコードをDBに生成
     // 本来複数同時生成には、createManyというメソッドがあるが、sqliteではcreateManyが使えないためfor文1つずつ実施
     for (const category of categories) {
-      await prisma.postCaregory.create({
+      await prisma.postCategory.create({
         data: {
           postId: post.id,
           categoryId: category.id,

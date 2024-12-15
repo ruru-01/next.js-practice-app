@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client/extension";
+import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient()
@@ -39,7 +39,7 @@ interface CreatePostRequestBody {
 }
 
 // POSTという命名にすることで、POSTリクエストの時にこの関数が呼ばれる
-export const POST = async (request: Request, context: any) => {
+export const POST = async (request: NextRequest) => {
   try {
     // リクエストのbodyを取得
     const body = await request.json()
@@ -59,7 +59,7 @@ export const POST = async (request: Request, context: any) => {
     // 記事とカテゴリーの中間テーブルのレコードをDBに生成
     // 本来複数同時生成には、createManyというメソッドがあるが、sqliteではcreateManyが使えないためfor文1つずつ実施する
     for (const category of categories) {
-      await prisma.postCaregory.create({
+      await prisma.postCategory.create({
         data: {
           categoryId: category.id,
           postId: data.id,
