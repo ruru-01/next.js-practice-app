@@ -3,11 +3,11 @@
 import React, {useEffect, useState} from 'react';
 import {Card, CardContent, Typography, Grid2, Box, Container, Chip, CardActionArea} from '@mui/material';
 import parse from 'html-react-parser';
-import { MicroCmsPost } from './_types/Post';
 import Link from 'next/link';
+import { Post } from '@/types/post'
 
 export default function Page() {
-  const [ posts, setPosts ] = useState<MicroCmsPost[]>([]);
+  const [ posts, setPosts ] = useState<Post[]>([]);
   const [ loading ] = useState<boolean>(false);
   const formatDate = (dateString: number) => {
     const date = new Date(dateString);
@@ -20,13 +20,9 @@ export default function Page() {
   // APIでpostsを取得する処理をuseEffectで実行する
   useEffect(() => {
     const fetcher = async () => {
-      const res = await fetch('https://f15a9rs0qh.microcms.io/api/v1/posts', { // 管理画面で取得したエンドポイント
-            headers: {
-                    'X-MICROCMS-API-KEY' : process.env.NEXT_PUBLIC_MICROCMS_API_KEY as string, // 管理画面で取得したAPIキー
-                },
-          })
-      const { contents } = await res.json()
-      setPosts(contents)
+      const res = await fetch('api/posts')
+      const { posts } = await res.json()
+      setPosts(posts)
     }
 
     fetcher()
@@ -64,10 +60,11 @@ export default function Page() {
                           {post.createdAt ? formatDate(Date.parse(post.createdAt)) : '日付なし'}
                         </Typography>
                         <Box>
-                          {post.categories.map((category) => (
-                              <Box key={category.id} sx={{ mr: 1, display: 'inline-block' }}>
+                        {/* プロパティ 'map' は型 '{ category: { id: number; name: string; createdAt: Date; updatedAt: Date; }; }' に存在しません。 */}
+                          {post.postCategories.map((postCategories) => (
+                              <Box key={postCategories.category.id} sx={{ mr: 1, display: 'inline-block' }}>
                                 <Chip
-                                    label={category.name || '不明なカテゴリ'}
+                                    label={postCategories.category.name || '不明なカテゴリ'}
                                      color="primary"
                                     variant="outlined"
                                     sx={{ borderRadius: 1 }}
