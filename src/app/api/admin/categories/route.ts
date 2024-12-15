@@ -1,4 +1,3 @@
-// import { PrismaClient } from "@prisma/client/extension";
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,13 +5,12 @@ const prisma = new PrismaClient()
 
 export const GET = async (request: NextRequest) => {
   try {
-    // カテゴリー一覧をDBから取得
+    // カテゴリーの一覧をDBから取得
     const categories = await prisma.category.findMany({
       orderBy: {
-        createdAt: 'desc'
+        createdAt: 'desc', // 作成日時の降順で取得
       },
     })
-
 
     // レスポンスを返す
     return NextResponse.json({ status: 'OK', categories }, { status: 200 })
@@ -22,7 +20,7 @@ export const GET = async (request: NextRequest) => {
   }
 }
 
-//カテゴリーの作成時に送られてくるリクエストのbodyの型
+// カテゴリーの作成時に送られてくるリクエストのbodyの型
 interface CreateCategoryRequestBody {
   name: string
 }
@@ -36,7 +34,7 @@ export const POST = async (request: NextRequest) => {
     // bodyの中からnameを取り出す
     const { name }: CreateCategoryRequestBody = body
 
-    // カテゴリーをDBに生成　
+    // カテゴリーをDBに生成
     const data = await prisma.category.create({
       data: {
         name,
