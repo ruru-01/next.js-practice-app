@@ -1,0 +1,1 @@
+// 記事新規作成ページ admin/posts/new

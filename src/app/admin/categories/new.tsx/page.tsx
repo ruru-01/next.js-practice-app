@@ -1,0 +1,1 @@
+// カテゴリー新規作成ページ admin/categories/new

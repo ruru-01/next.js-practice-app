@@ -1,0 +1,1 @@
+// カテゴリー一覧ページ admin/categories

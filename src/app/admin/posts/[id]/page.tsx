@@ -1,0 +1,1 @@
+// 記事編集ページ admin/posts/[id]
