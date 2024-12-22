@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
               justifyContent: 'space-between',
             }}
         >
-          <Link href="/">
+          <Link href="/admin/posts">
           <Typography
               sx={{
                 fontWeight: 'bold'

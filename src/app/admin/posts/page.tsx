@@ -28,15 +28,14 @@ export default function Page() {
   return (
 
     <div className="">
-      <div className="">
-        <h1 className="">記事一覧</h1>
-        <button className="">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-xl font-bold">記事一覧</h1>
+        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           <Link href='/admin/posts/new'>新規作成</Link>
         </button>
       </div>
 
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Posts</h1>
       <ul className="space-y-4">
         {posts.map((post) => (
           <li key={post.id} className="p-4 border rounded shadow">
