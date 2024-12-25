@@ -5,7 +5,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import { Category } from '@/types/Category'
-
+import PostForm from '@/components/PostForm'
 
 export default function Page() {
   const [ title, setTitle ] = useState('')
@@ -26,7 +26,7 @@ export default function Page() {
         'Content-Type': 'application/json',
       },
       // フォームの入力値をJSON形式でサーバーに送信
-      body: JSON,stringify({ title, content, thumbnailUrl, categories}),
+      body: JSON.stringify({ title, content, thumbnailUrl, categories}),
     })
 
     // レスポンスから作成された記事のIDを取得
@@ -44,8 +44,18 @@ export default function Page() {
       </div>
 
       {/* PostFormコンポーネントを呼び出す */}
-      <PostForm> 
-      </PostForm>
+      <PostForm
+      mode="new"
+      title={title}
+      setTitle={setTitle}
+      content={content}
+      setContent={setContent}
+      thumbnailUrl={thumbnailUrl}
+      setThumbnailUrl={setThumbnailUrl}
+      categories
+      setCategories={setCategories}
+      onSubmit={handleSubmit}
+      />
     </div>
   )
 }

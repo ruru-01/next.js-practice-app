@@ -63,7 +63,7 @@ export const PostForm: React.FC<Props> = ({
         {/* CategoriesSelectコンポーネントを呼び出す */}
         <CategoriesSelect
           selectedCategories={categories}
-          setSelectCategories={setCategories}
+          setSelectedCategories={setCategories}
         />
       </div>
       <button
