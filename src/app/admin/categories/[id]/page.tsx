@@ -61,13 +61,13 @@ export default function Page() {
         <h1 className="text-2xl font-bold mb-4">カテゴリー編集</h1>
       </div>
 
-      <CategoryForm>
+      <CategoryForm
         mode="edit"
         name={name}
         setName={setName}
         onSubmit={handleSubmit}
         onDelete={handleDeletePost}
-      </CategoryForm>
+      />
     </div>
   )
 }

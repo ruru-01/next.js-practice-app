@@ -3,9 +3,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 import { Category } from '@/types/Category'
-import PostForm from '@/components/PostForm'
+import { PostForm } from '../_components/PostForm'
 
 export default function Page() {
   const [ title, setTitle ] = useState('')
@@ -52,7 +52,7 @@ export default function Page() {
       setContent={setContent}
       thumbnailUrl={thumbnailUrl}
       setThumbnailUrl={setThumbnailUrl}
-      categories
+      categories={categories}
       setCategories={setCategories}
       onSubmit={handleSubmit}
       />
