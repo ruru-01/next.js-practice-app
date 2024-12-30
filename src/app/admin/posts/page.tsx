@@ -13,6 +13,7 @@ export default function Page() {
     id: number;
     title: string;
     content: string;
+    createdAt: string;
   }
 
   useEffect(() => {
@@ -25,6 +26,10 @@ export default function Page() {
     fetcher()
   }, []);
 
+  if (!posts) {
+    return <p>読み込み中...</p>
+  }
+
   return (
 
     <div className="">
@@ -35,16 +40,20 @@ export default function Page() {
         </button>
       </div>
 
-    <div className="container mx-auto p-4">
-      <ul className="space-y-4">
-        {posts.map((post) => (
-          <li key={post.id} className="p-4 border rounded shadow">
-            <h2 className="text-xl font-semibold">{post.title}</h2>
-            <p className="text-gray-700">{post.content}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
+      <div className="">
+        {posts.map((post) => {
+          return (
+            <Link href={`/admin/posts/${post.id}`} key={post.id}>
+              <div className="border-b border-gray-300 p-4 hover:bg-gray-100 cursor-pointer">
+                <div className='text-xl font-bold'>{post.title}</div>
+                <div className='text-gray-500'>
+                  {new Date(post.createdAt).toLocaleDateString()}
+                </div>
+              </div>
+            </Link>
+          )
+        })}
+      </div>
     </div>
   )
 }

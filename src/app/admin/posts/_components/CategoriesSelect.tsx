@@ -13,12 +13,14 @@ interface Props {
   selectedCategories: Category[];
   // カテゴリーが選択されたときに呼び出される関数
   setSelectedCategories: (categoried: Category[]) => void;
+  className?: string;
 }
 
 // カテゴリーを選択するセレクトボックス
 export const CategoriesSelect: React.FC<Props> = ({
   selectedCategories,
   setSelectedCategories,
+  className,
 }) => {
   // カテゴリーの一覧
   // ここではダミーデータを使っているが、実際にはAPIから取得する
@@ -31,6 +33,7 @@ export const CategoriesSelect: React.FC<Props> = ({
       // 選択されたカテゴリーがすでに選択されているかチェック
       const isSelect = selectedCategories.some((category) => category.id === value);
       if (isSelect) {
+        setSelectedCategories(selectedCategories.filter((category) => category.id !== value))
         // 選択されている場合は何もしない
         return
       }
@@ -55,7 +58,7 @@ export const CategoriesSelect: React.FC<Props> = ({
 
   return (
     // カテゴリーを複数選択するセレクトボックスを提供
-    <FormControl className="">
+    <FormControl className={className}>
       <Select
         multiple  // 複数選択可能にする
         value={selectedCategories} // 選択されたカテゴリー
@@ -63,7 +66,7 @@ export const CategoriesSelect: React.FC<Props> = ({
         input={<OutlinedInput />}
 
         // 選択されたカテゴリーをChipコンポーネントとして表示する
-        renderValue={(selected: Category[]) => (　
+        renderValue={(selected: Category[]) => (
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
             {selected.map((value: Category) => (
               <Chip key={value.id} label={value.name} />

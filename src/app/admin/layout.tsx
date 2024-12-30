@@ -14,7 +14,6 @@ export default function AdminLayout({
   }
 
   return (
-    // 以下はぶべさんのコード参考
     <>
       {/* サイドバー */}
       <aside className="fixed bg-gray-100 w-[280px] left-0 bottom-0 top-[72px]">

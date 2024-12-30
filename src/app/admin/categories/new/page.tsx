@@ -3,7 +3,6 @@
 'use client'
 
 import { useState } from 'react'
-import { Category } from '@/types/Category'
 import { useRouter } from 'next/navigation';
 import { CategoryForm } from '../_components/CategoryForm'
 
@@ -30,6 +29,8 @@ export default function Page() {
     router.push(`/admin/categories/${id}`)
 
     alert('カテゴリーを作成しました。')
+
+    router.push('/admin/categories')
   }
 
   return (

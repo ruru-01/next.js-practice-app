@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { NextRequest, NextResponse } from 'next/server'
+import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
 
@@ -7,11 +7,11 @@ const prisma = new PrismaClient()
 export const GET = async (request: NextRequest) => {
   try {
     // Postの一覧をDBから取得
-    const posts = await prisma.post.findMany ({
+    const posts = await prisma.post.findMany({
       include: {
         // カテゴリーも含めて取得
-        postCategories : {
-          include : {
+        postCategories: {
+          include: {
             category: {
               // カテゴリーのidとnameだけ取得
               select: {

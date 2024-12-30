@@ -1,94 +1,71 @@
-'use client';
+'use client'
 
-import React, {useEffect, useState} from 'react'
-import { Container, Card, CardMedia, Typography, Box, Chip } from '@mui/material';
-import parse from 'html-react-parser';
-import {useParams} from "next/navigation";
-import { Post } from '@/types/post'
+import { useEffect, useState } from 'react'
+import classes from '../../../styles/Detail.module.scss'
+import { Post } from '@/types/Post'
+import Image from 'next/image'
+import { useParams } from 'next/navigation'
 
 export default function Page() {
-  const params = useParams() as { id: string };
-  const { id } = params;
-  const [ post, setPost ] = useState<Post | null>(null);
-  const [ loading, setLoading ] = useState(false);
+  // react-routerのuseParamsを使うと、URLのパラメータを取得できます。
+  const { id } = useParams()
+  const [post, setPost] = useState<Post | null>(null)
+  const [loading, setLoading] = useState(false)
 
-  const formatDate = (dateString: string | number) => {
-    const date = new Date(dateString);
-    const year = date.getFullYear();
-    const month = ('0' + (date.getMonth() + 1)).slice(-2);
-    const day = ('0' + date.getDate()).slice(-2);
-    return `${year}/${month}/${day}`;
-  };
-
-  // APIでpostsを取得する処理をuseEffectで実行する
+  // APIでpostsを取得する処理をuseEffectで実行します。
   useEffect(() => {
     const fetcher = async () => {
-        setLoading(true)
-        const res = await fetch(`/api/posts/${id}`) // APIを
-        const { post } = await res.json()
-        setPost(post)
-        setLoading(false)
-    }
-
-    if (!post) {
-        <div>記事が見つかりません</div>
+      setLoading(true)
+      const res = await fetch(`/api/posts/${id}`)
+      const { post } = await res.json()
+      setPost(post)
+      setLoading(false)
     }
 
     fetcher()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id])
 
+  // 記事取得中は、読み込み中であることを表示します。
   if (loading) {
     return <div>読み込み中...</div>
   }
 
-  if (!loading && !post) {
+  // 記事が見つからなかった場合は、記事が見つからないことを表示します。
+  if (!post) {
     return <div>記事が見つかりません</div>
   }
 
   return (
-      <Container maxWidth="md" sx={{ pb: 5 }}>
-        <Card>
-            {post?.thumbnailUrl && (
-              <CardMedia
-                  component="img"
-                  image={post.thumbnailUrl}
-                  alt={post.title || 'サムネイル'}
-              />
-            )}
-        </Card>
-        <Box sx={{ padding: '20px' }}>
-          <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-          >
-            <Typography sx={{ fontSize: '13px', color: '#888888' }}>
-            {post?.createdAt ? formatDate(Date.parse(post.createdAt)) : '日付なし'}
-            </Typography>
-            <Box>
-            {/* プロパティ 'map' は型 '{ category: { id: number; name: string; createdAt: Date; updatedAt: Date; }; }' に存在しません。 */}
-              {post?.postCategories.map((postCategory) => (
-                  <Box key={postCategory.id} sx={{ mr: 1, display: 'inline-block' }}>
-                    <Chip
-                        label={postCategory.name || '不明なカテゴリ'}
-                        color="primary"
-                        variant="outlined"
-                        sx={{ borderRadius: 1 }}
-                    />
-                  </Box>
-              ))}
-            </Box>
-          </Box>
-          <Typography sx={{ fontSize: '24px', padding: '15px 0' }}>
-            {post?.title || 'タイトルなし'}
-          </Typography>
-          <Typography sx={{ fontSize: '16px' }}>
-            {post?.content ? parse(post.content) : '本文なし'}
-          </Typography>
-        </Box>
-      </Container>
-  );
-};
+    <div className={classes.container}>
+      <div className={classes.post}>
+        <div className={classes.postImage}>
+          <Image src={post.thumbnailUrl} alt="" height={1000} width={1000} />
+        </div>
+        <div className={classes.postContent}>
+          <div className={classes.postInfo}>
+            <div className={classes.postDate}>
+              {new Date(post.createdAt).toLocaleDateString()}
+            </div>
+            <div className={classes.postCategories}>
+              {post.postCategories.map((postCategory) => {
+                return (
+                  <div
+                    key={postCategory.category.id}
+                    className={classes.postCategory}
+                  >
+                    {postCategory.category.name}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+          <div className={classes.postTitle}>{post.title}</div>
+          <div
+            className={classes.postBody}
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}

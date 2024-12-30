@@ -28,7 +28,9 @@ export default function Page() {
       body: JSON.stringify({ name }),
     })
 
-    alert('カテゴリーを更新しました、')
+    alert('カテゴリーを更新しました。')
+
+    router.push('/admin/categories')
   }
 
   const handleDeletePost = async () => {

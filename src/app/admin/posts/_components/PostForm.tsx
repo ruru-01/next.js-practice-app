@@ -85,6 +85,7 @@ export const PostForm: React.FC<Props> = ({
         <CategoriesSelect
           selectedCategories={categories}
           setSelectedCategories={setCategories}
+          className="mt-1 block w-full rounded-md border border-gray-200 p-3"
         />
       </div>
       <button

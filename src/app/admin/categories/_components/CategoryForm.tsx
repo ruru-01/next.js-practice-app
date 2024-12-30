@@ -27,7 +27,7 @@ export const CategoryForm: React.FC<Props> =  ({
           type="text"
           id="title"
           value={name}
-          onChange={(e) => setName(e)}
+          onChange={(e) => setName(e.target.value)}
           className="mt-1 block w-full rounded-md border border-gray-200 p-3"
         />
         </div>

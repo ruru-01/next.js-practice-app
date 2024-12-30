@@ -34,13 +34,16 @@ export default function Page() {
 
     // 作成された記事の詳細ページに遷移
     router.push(`/admin/posts/${id}`)
+
     alert('記事を作成しました')
+
+    router.push(`/admin/posts`)
   }
 
   return (
-    <div className="">
-      <div className="">
-        <h1>記事作成</h1>
+    <div className="container mx-auto px-4">
+      <div className="mb-8">
+        <h1 className='text-2xl font-bold mb-4'>記事作成</h1>
       </div>
 
       {/* PostFormコンポーネントを呼び出す */}
