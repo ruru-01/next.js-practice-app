@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:push": "env-cmd -f .env.local npx prisma db push"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
@@ -25,6 +26,7 @@
     "@types/react": "18.3.12",
     "@types/react-dom": "^18",
     "@types/react-router-dom": "^5.3.3",
+    "env-cmd": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
     "postcss": "^8",
