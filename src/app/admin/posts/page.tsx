@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
   const [ posts, setPosts ] = useState<Post[]>([]);
-
+  const [ isLoading, setIsLoading ] = useState(true);
 
   // Post型の定義
   interface Post{
@@ -18,16 +18,22 @@ export default function Page() {
 
   useEffect(() => {
     const fetcher = async () => {
+      setIsLoading(true) // ローディング開始
       const res = await fetch('/api/admin/posts')
       const { posts } = await res.json()
-      setPosts(posts)
+      setPosts(posts) //記事データをセット
+      setIsLoading(false) // ローディング終了
     }
 
     fetcher()
   }, []);
 
-  if (!posts) {
+  if(isLoading) {
     return <p>読み込み中...</p>
+  }
+
+  if (posts.length === 0) {
+    return <p>記事がありません</p>
   }
 
   return (

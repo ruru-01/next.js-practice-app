@@ -67,13 +67,6 @@ export const PUT = async (
       },
     })
 
-    // 一旦記事とカテゴリーの中間テーブルのレコードを全て削除
-    await prisma.postCategory.deleteMany({
-      where: {
-        postId: parseInt(id),
-      },
-    })
-
     // 記事とカテゴリーの中間テーブルのレコードをDBに生成
     // 本来複数同時生成には、createManyというメソッドがあるが、sqliteではcreateManyが使えないためfor文1つずつ実施
     for (const category of categories) {

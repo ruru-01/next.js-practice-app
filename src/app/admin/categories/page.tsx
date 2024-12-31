@@ -8,18 +8,25 @@ import Link from 'next/link'
 
 export default function Page() {
   const [categories, setCategories] = useState<Category[]>([])
+  const [ isLoading, setIsLoading ] = useState(true);
 
   useEffect(() => {
     const fetcher = async () => {
+      setIsLoading(true) // ローディング開始
       const res = await fetch('/api/admin/categories')
       const { categories } = await res.json()
-      setCategories(categories)
+      setCategories(categories); // カテゴリーデータをセット
+      setIsLoading(false) // ローディング終了
     }
     fetcher()
   }, [])
 
-  if (!categories) {
+  if (isLoading) {
     return <p>読み込み中...</p>
+  }
+
+  if (categories.length === 0) {
+    return <p>カテゴリーがありません</p>
   }
 
   return (
