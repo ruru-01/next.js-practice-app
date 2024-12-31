@@ -1,11 +1,13 @@
-export type Post = {
-  id: number;
-  title: string;
-  thumbnailUrl: string;
-  createdAt: string;
-  categories: string[];
-  content: string;
-};
+import { Category } from "@prisma/client";
+
+export interface Post {
+  id: number
+  title: string
+  content: string
+  createdAt: string
+  postCategories: { category: Category }[]
+  thumbnailUrl: string
+}
 
 export interface MicroCmsPost {
   id: string

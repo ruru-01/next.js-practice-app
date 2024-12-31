@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button, Container, Grid2, TextField, Typography } from "@mui/material";
 import {useState} from "react";
-import {API_BASE_URL} from "@/app/Constants";
+import {API_BASE_URL} from "@/Constants";
 
 interface Errors {
   name?: string;
