@@ -1,45 +1,50 @@
-import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import {Box, Typography} from '@mui/material';
-import Link from 'next/link';
+'use client'
+
+import Link from 'next/link'
+import React from 'react'
+import { supabase } from '@/utils/supabase'
+import { useSupabaseSession } from '../_hooks/useSupabaseSession'
 
 export const Header: React.FC = () => {
+  // ログアウト処理
+  const handleLogout = async () => {
+    // ログアウト処理。ログアウト後はトップページに遷移
+    await supabase.auth.signOut()
+    window.location.href = '/'
+  }
+
+  // セッション情報とローディング状態を取得
+  // セッション情報が取得できるまでローディング画面を表示
+  const { session, isLoding } = useSupabaseSession()
+
   return (
-      <AppBar
-          position="static"
-          sx={{
-            backgroundColor: '#262626',
-            mb: 5,
-            boxShadow: 'none',
-          }}
-      >
-        <Toolbar
-            sx={{
-              justifyContent: 'space-between',
-            }}
-        >
-          <Link href="/admin/posts">
-          <Typography
-              sx={{
-                fontWeight: 'bold'
-              }}
-          >
-            Blog
-          </Typography>
-          </Link>
-          <Box>
-          </Box>
-          <Link href="contact">
-          <Typography
-              sx={{
-                fontWeight: 'bold',
-              }}
-          >
-            お問い合わせ
-          </Typography>
-          </Link>
-        </Toolbar>
-      </AppBar>
-  );
-};
+    <header className="bg-gray-800 text-white p-6 font-bold flex justify-between items-center">
+      <Link href="/" className="header-link">
+        Blog
+      </Link>
+      {/* ログイン状態によって表示を切り替え,ログイン状態の読み込み中は何も表示しない */}
+      {/* sessionがある場合はログイン中のメニュー、なければ未ログイン状態のメニューを表示 */}
+      {!isLoding && (
+        <div className="flex items-center gap-4">
+          {session ? (
+            <>
+              <Link href="/admin" className="header-link">
+                管理画面
+              </Link>
+              <button onClick={handleLogout}>ログアウト</button>
+            </>
+          ) : (
+            <>
+              <Link href="/contact" className="header-link">
+                お問い合わせ
+              </Link>
+              <Link href="/login" className="header-link">
+                ログイン
+              </Link>
+            </>
+          )}
+        </div>
+      )}
+    </header>
+  )
+}
