@@ -10,9 +10,8 @@ export const GET = async (
 ) => {
   const { currentUser, error } = await getCurrentUser(request)
 
-  if(error) {
+  if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
-  }
 
   const { id } = params
 
@@ -57,9 +56,8 @@ export const PUT = async (
 ) => {
   const { currentUser, error } = await getCurrentUser(request)
 
-  if(error) {
+  if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
-  }
 
   // paramsの中にidが入っているため、それを取り出す
   const { id } = params
@@ -95,7 +93,7 @@ export const PUT = async (
     return NextResponse.json({ status: 'OK', post: post }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ status: error.message }, { status:400 })
+      return NextResponse.json({ status: error.message }, { status: 400 })
   }
 }
 
@@ -106,15 +104,14 @@ export const DELETE = async (
 ) => {
   const { currentUser, error } = await getCurrentUser(request)
 
-  if (error) {
+  if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
-  }
 
-  // paramsの中にidが入っているため、それを取り出す
+  // paramsの中にidが入っているので、それを取り出す
   const { id } = params
 
   try {
-    // idを指定してPostを削除
+    // idを指定して、Postを削除
     await prisma.post.delete({
       where: {
         id: parseInt(id),

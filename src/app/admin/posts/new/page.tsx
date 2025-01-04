@@ -11,7 +11,7 @@ import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 export default function Page() {
   const [ title, setTitle ] = useState('')
   const [ content, setContent] = useState('')
-  const [ thumbnailImageKey, setThumbnailImageKey ] = useState('https://placehold.jp/800x400.png',) // 画像のデフォルトURL
+  const [ thumbnailImageKey, setThumbnailImageKey ] = useState('')
   const [ categories, setCategories ] = useState<Category[]>([])
   const router = useRouter()
   const { token } = useSupabaseSession()

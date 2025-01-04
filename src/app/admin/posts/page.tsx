@@ -4,6 +4,7 @@
 import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession';
 import Link from 'next/link'
 import { useEffect, useState } from "react";
+import { Post } from '@/types/post';
 
 export default function Page() {
   const [ posts, setPosts ] = useState<Post[]>([]);
@@ -20,13 +21,14 @@ export default function Page() {
   }
 
   useEffect(() => {
-    if (!token) return
+    if (!token) return;
+
     const fetcher = async () => {
       setIsLoading(true) // ローディング開始
       const res = await fetch('/api/admin/posts', {
         headers: {
           'Content-Type': 'application/json',
-          Authourication: token, // トークンをリクエストヘッダーに追加
+          Authorization: token, // トークンをリクエストヘッダーに追加
         },
       })
       const { posts } = await res.json()

@@ -33,19 +33,10 @@ export const PostForm: React.FC<Props> = ({
   onDelete,
 }) => {
 
-  /**
-   * サムネイル画像のURL
-   * thumbnailImageKeyを元に、Supabaseから取得した画像のURLを格納する
-   * 画像がアップロードされるたびに、画像のURLを取得する
-   */
-  const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(
-    null,
-  )
-
   const handleImageChange = async (
     event: ChangeEvent<HTMLInputElement>,
   ): Promise<void> => {
-    if (!event.target.files || event.target.files.length === 0) {
+    if (!event.target.files || event.target.files.length == 0) {
       // 画像が選択されていないのでreturn
       return
     }
@@ -56,11 +47,11 @@ export const PostForm: React.FC<Props> = ({
 
     // Supabaseに画像をアップロード
     const { data, error } = await supabase.storage
-    .from('post_thumbnail') // バケット（post_thumbnail）を指定
-    .upload(filePath, file, {
-      cacheControl: '3600', // キャッシュの有効期限を指定
-      upsert: false, // すでにファイルが存在する場合、上書きしない
-    })
+      .from('post_thumbnail') // ここでバケット名を指定
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      })
 
     // エラーが発生した場合、エラーメッセージを表示して終了
     if (error) {
@@ -71,6 +62,11 @@ export const PostForm: React.FC<Props> = ({
     // data.pathに画像固有のkeyが入っているので、thumbnailImageKeyに格納する
     setThumbnailImageKey(data.path)
   }
+
+    // Imageタグのsrcにセットする画像URLを持たせるstate
+    const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(
+      null,
+    )
 
   // DBに保存しているthumbnailImageKeyを元に、Supabaseから画像のURLを取得
   useEffect(() => {

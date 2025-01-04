@@ -26,8 +26,8 @@ export default function Page() {
     await fetch(`/api/admin/posts/${id}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
         Authorization: token!, // トークンをリクエストヘッダーに追加。!をつけることでnullまたはundefinedでないことを保証
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ title, content, thumbnailImageKey, categories }),
     })
@@ -55,24 +55,25 @@ export default function Page() {
   }
 
   useEffect(() => {
+    // トークンがない場合は何もしない
     if (!token) return;
 
     const fetcher = async () => {
-      const res = await fetch(`/api/admin/posts/${id}`, {
+      const res = await fetch(`/api/admin/categories/${id}`, {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",
-        },
+        }
       });
       const { post }: { post: Post } = await res.json();
-      setTitle(post.title);
-      setContent(post.content);
+      setTitle(post.title)
+      setContent(post.content)
       setThumbnailImageKey(post.thumbnailImageKey);
       setCategories(post.postCategories.map((pc) => pc.category));
-    };
+    }
 
-    fetcher();
-  }, [id, token]);
+    fetcher()
+  }, [id, token])
 
   return (
     <div className="container mx-auto px-4">

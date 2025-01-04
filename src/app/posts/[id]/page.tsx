@@ -28,6 +28,7 @@ export default function Page() {
     fetcher()
   }, [id])
 
+  // DBに保存しているthumbnailImageKeyを元にSupabaseのストレージから画像のURLを取得する処理
   useEffect(() => {
     // postがnullまたはundefinedであるか確認、thumbnailImageKeyが存在しない場合は何もしない
     if (!post?. thumbnailImageKey) return;

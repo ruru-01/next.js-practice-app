@@ -5,23 +5,10 @@ import { getCurrentUser } from "@/utils/supabase";
 const prisma = new PrismaClient()
 
 export const GET = async (request: NextRequest) => {
-  const { currentUser, error }  = await getCurrentUser(request)
+  const { currentUser, error } = await getCurrentUser(request)
 
-  if (error) {
+  if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
-  }
-
-  // // Null合体演算子（??）は左辺がnullまたはundefinedの場合に右辺を返す
-  // //tokenがない場合は空文字を入れる
-  // const token = request.headers.get('Authorization') ?? ''
-
-  // // supabaseに対してtokenを送る
-  // const { error } = await supabase.auth.getUser(token)
-
-  // // 送ったtokenが正しくない場合、errorが返却される。クライアントにもエラーメッセージを返す
-  // if (error)
-  //   return NextResponse.json({ status: error.message }, { status: 400 })
-  //   // tokenが正しい場合、以降の処理を実行
 
   try {
     const posts = await prisma.post.findMany({
@@ -42,23 +29,26 @@ export const GET = async (request: NextRequest) => {
       },
     })
 
-    return NextResponse.json({ status: 'OK', posts: posts },{ status: 200 })
+    // DBとの接続を切断する（これを省くとDBとの接続が維持されたままになり、リクエストが増えるとDBの接続数が増えてしまうため）
+    await prisma.$disconnect()
+
+    return NextResponse.json({ status: 'OK', posts: posts }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ status:error.message }, { status: 400 })
+      return NextResponse.json({ status: error.message }, { status: 400 })
   }
 }
 
-// // 記事作成のリクエストボディの型
-// interface CreatePostRequestBody {
-//   title: string
-//   content: string
-//   categories: { id: number }[]
-//   thumbnailUrl: string
-// }
+// 記事作成のリクエストボディの型
+interface CreatePostRequestBody {
+  title: string
+  content: string
+  categories: { id: number }[]
+  thumbnailImageKey: string
+}
 
 // POSTという命名にすることで、POSTリクエストの時にこの関数が呼ばれる
-export const POST = async (request: NextRequest) => {
+export const POST = async (request: NextRequest, context: any) => {
   const { currentUser, error } = await getCurrentUser(request)
 
   if (error)
