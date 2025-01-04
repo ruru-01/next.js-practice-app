@@ -1,6 +1,10 @@
 import { Category } from '@/types/Category'
-import React from 'react'
+import React, { ChangeEvent } from 'react'
 import { CategoriesSelect } from './CategoriesSelect'
+import { handleImageChange } from '@/utils/supabase'
+import { v4 as uuidv4 } from 'uuid' // 固有IDを生成するライブラリ
+import { supabase } from '@/utils/supabase'
+import image from 'next/image'
 
 interface Props {
   mode: 'new' | 'edit'
@@ -8,8 +12,8 @@ interface Props {
   setTitle: (title: string) => void
   content: string
   setContent: (content: string) => void
-  thumbnailUrl: string
-  setThumbnailUrl: (thumbnailUrl: string) => void
+  thumbnailImageKey: string
+  setThumbnaiImageKey: (thumbnailImageKey: string) => void
   categories: Category[]
   setCategories: (categories: Category[]) => void
   onSubmit: (e: React.FormEvent) => void
@@ -22,13 +26,47 @@ export const PostForm: React.FC<Props> = ({
   setTitle,
   content,
   setContent,
-  thumbnailUrl,
-  setThumbnailUrl,
+  thumbnailImageKey,
+  setThumbnailImageKey,
   categories,
   setCategories,
   onSubmit,
   onDelete,
 }) => {
+
+  const [ thumbnailImageKey, setThumbnailImageKey ] = useState('')
+
+  const handleImageChange = async (
+    event: ChangeEvent<HTMLInputElement>,
+  ): Promise<void> => {
+    if (!event.target.files || event.target.files.length === 0) {
+      // 画像が選択されていないのでreturn
+      return
+    }
+
+    const file = event.target.files[0] // 選択された画像を取得
+
+    const filePath = `private/${uuidv4()}` // ファイルパスを指定
+
+    // Supabaseに画像をアップロード
+    const { data, error } = await supabase.storage
+    .from('post_thumbnail') // バケット（post_thumbnail）を指定
+    .upload(filePath, file, {
+      cacheControl: '3600', // キャッシュの有効期限を指定
+      upsert: false, // すでにファイルが存在する場合、上書きしない
+    })
+
+    // エラーが発生した場合、エラーメッセージを表示して終了
+    if (error) {
+      alert(error.message)
+      return
+    }
+
+    // data.pathに画像固有のkeyが入っているので、thumbnailImageKeyに格納する
+    setThumbnailImageKey(data.path)
+  }
+
+
   return (
     <form onSubmit={onSubmit} className="space-y-4">
       <div>
@@ -62,17 +100,17 @@ export const PostForm: React.FC<Props> = ({
       </div>
       <div>
         <label
-          htmlFor="thumbnailUrl"
+          htmlFor="thumbnailImageKey"
           className="block text-sm font-medium text-gray-700"
         >
           サムネイルURL
         </label>
         <input
-          type="text"
-          id="thumbnailUrl"
+          type="file"
+          id="thumbnailImageKey"
           value={thumbnailUrl}
-          onChange={(e) => setThumbnailUrl(e.target.value)}
-          className="mt-1 block w-full rounded-md border border-gray-200 p-3"
+          onChange={handleImageChange}
+          accept="image/*"
         />
       </div>
       <div>
