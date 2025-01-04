@@ -2,7 +2,6 @@ import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/utils/supabase";
 
-
 const prisma = new PrismaClient()
 
 export const GET = async (request: NextRequest) => {
@@ -50,29 +49,34 @@ export const GET = async (request: NextRequest) => {
   }
 }
 
-// 記事作成のリクエストボディの型
-interface CreatePostRequestBody {
-  title: string
-  content: string
-  categories: { id: number }[]
-  thumbnailUrl: string
-}
+// // 記事作成のリクエストボディの型
+// interface CreatePostRequestBody {
+//   title: string
+//   content: string
+//   categories: { id: number }[]
+//   thumbnailUrl: string
+// }
 
 // POSTという命名にすることで、POSTリクエストの時にこの関数が呼ばれる
 export const POST = async (request: NextRequest) => {
+  const { currentUser, error } = await getCurrentUser(request)
+
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 400 })
+
   try {
     // リクエストのbodyを取得
     const body = await request.json()
 
     // bodyの中からtitle, contant, categories, thumbnailUrlを取り出す
-    const { title, content, categories, thumbnailUrl }: CreatePostRequestBody = body
+    const { title, content, categories, thumbnailImageKey } = body
 
     // 投稿をDBに生成
     const data = await prisma.post.create({
       data: {
         title,
         content,
-        thumbnailUrl,
+        thumbnailImageKey,
       },
     })
 

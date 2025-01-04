@@ -21,7 +21,7 @@ export default function Page() {
       password,
       options: {
         // メール認証後にリダイレクトするURL
-        emailRedirectTo: `http://localhost:3000/login`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/login`,
       },
     })
     if (error) {

@@ -29,6 +29,7 @@
     "@types/react": "18.3.12",
     "@types/react-dom": "^18",
     "@types/react-router-dom": "^5.3.3",
+    "dotenv-cli": "^8.0.0",
     "env-cmd": "^10.1.0",
     "eslint": "^8",
     "eslint-config-next": "14.2.13",
