@@ -2,17 +2,19 @@
 
 'use client'
 
-import { useState } from 'react'
+import { use, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Category } from '@/types/Category'
 import { PostForm } from '../_components/PostForm'
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 
 export default function Page() {
   const [ title, setTitle ] = useState('')
   const [ content, setContent] = useState('')
-  const [ thumbnailUrl, setThumbnailUrl ] = useState('https://placehold.jp/800x400.png',) // 画像のデフォルトURL
+  const [ thumbnailImageKey, setThumbnailImageKey ] = useState('https://placehold.jp/800x400.png',) // 画像のデフォルトURL
   const [ categories, setCategories ] = useState<Category[]>([])
   const router = useRouter()
+  const { token } = useSupabaseSession()
 
   const handleSubmit = async (e: React.FormEvent) => {
     // フォームのデフォルトの送信処理をキャンセル
@@ -24,9 +26,10 @@ export default function Page() {
       // リクエストヘッダーにContent-Typeを指定（リクエストボディがJSON形式であることを示す）
       headers: {
         'Content-Type': 'application/json',
+        Authorization: token!, // トークンをリクエストヘッダーに追加。!をつけることでnullまたはundefinedでないことを保証
       },
       // フォームの入力値をJSON形式でサーバーに送信
-      body: JSON.stringify({ title, content, thumbnailUrl, categories}),
+      body: JSON.stringify({ title, content, thumbnailImageKey, categories}),
     })
 
     // レスポンスから作成された記事のIDを取得
@@ -53,8 +56,8 @@ export default function Page() {
       setTitle={setTitle}
       content={content}
       setContent={setContent}
-      thumbnailUrl={thumbnailUrl}
-      setThumbnailUrl={setThumbnailUrl}
+      thumbnailImageKey={thumbnailImageKey}
+      setThumbnailImageKey={setThumbnailImageKey}
       categories={categories}
       setCategories={setCategories}
       onSubmit={handleSubmit}

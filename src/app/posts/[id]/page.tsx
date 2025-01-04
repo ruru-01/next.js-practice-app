@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import classes from '../../../styles/Detail.module.scss'
-import { Post } from '@/types/Post'
+import { Post } from '@/types/post'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 

@@ -6,15 +6,17 @@ import { useRouter, useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { PostForm } from "../_components/PostForm"
 import { Category } from "@/types/Category"
-import { Post } from "@/types/Post"
+import { Post } from "@/types/post"
+import { useSupabaseSession } from "@/app/_hooks/useSupabaseSession"
 
 export default function Page() {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [thumbnailUrl, setThumbnailUrl] = useState('')
+  const [thumbnailImageKey, setThumbnailImageKey] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const { id } = useParams()
   const router = useRouter()
+  const { token } = useSupabaseSession()
 
   const handleSubmit = async (e: React.FormEvent) => {
     // ページのデフォルトの動作をキャンセル
@@ -25,12 +27,14 @@ export default function Page() {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: token!, // トークンをリクエストヘッダーに追加。!をつけることでnullまたはundefinedでないことを保証
       },
-      body: JSON.stringify({ title, content, thumbnailUrl, categories }),
+      body: JSON.stringify({ title, content, thumbnailImageKey, categories }),
     })
 
     alert('記事を更新しました。')
 
+    // 記事一覧ページに遷移
     router.push('/admin/posts')
   }
 
@@ -39,6 +43,10 @@ export default function Page() {
 
     await fetch(`/api/admin/categories/${id}`, {
       method: 'DELETE',
+      headers: {
+        Authorization: token!,
+        "Content-Type": "application/json",
+      },
     })
 
     alert('記事を削除しました。')
@@ -47,18 +55,24 @@ export default function Page() {
   }
 
   useEffect(() => {
-    const fetcher = async () => {
-      const res = await fetch(`/api/admin/categories/${id}`)
-      const { post }: { post: Post } = await res.json()
-      console.log(post);
-      setTitle(post.title)
-      setContent(post.content)
-      setThumbnailUrl(post.thumbnailUrl)
-      setCategories(post.postCategories.map((pc) => pc.category));
-    }
+    if (!token) return;
 
-    fetcher()
-  }, [id])
+    const fetcher = async () => {
+      const res = await fetch(`/api/admin/posts/${id}`, {
+        headers: {
+          Authorization: token,
+          "Content-Type": "application/json",
+        },
+      });
+      const { post }: { post: Post } = await res.json();
+      setTitle(post.title);
+      setContent(post.content);
+      setThumbnailImageKey(post.thumbnailImageKey);
+      setCategories(post.postCategories.map((pc) => pc.category));
+    };
+
+    fetcher();
+  }, [id, token]);
 
   return (
     <div className="container mx-auto px-4">
@@ -72,8 +86,8 @@ export default function Page() {
       setTitle={setTitle}
       content={content}
       setContent={setContent}
-      thumbnailUrl={thumbnailUrl}
-      setThumbnailUrl={setThumbnailUrl}
+      thumbnailImageKey={thumbnailImageKey}
+      setThumbnailImageKey={setThumbnailImageKey}
       categories={categories}
       setCategories={setCategories}
       onSubmit={handleSubmit}

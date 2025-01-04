@@ -1,10 +1,9 @@
 import { Category } from '@/types/Category'
-import React, { ChangeEvent } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { CategoriesSelect } from './CategoriesSelect'
-import { handleImageChange } from '@/utils/supabase'
 import { v4 as uuidv4 } from 'uuid' // 固有IDを生成するライブラリ
 import { supabase } from '@/utils/supabase'
-import image from 'next/image'
+import Image from 'next/image'
 
 interface Props {
   mode: 'new' | 'edit'
@@ -13,7 +12,7 @@ interface Props {
   content: string
   setContent: (content: string) => void
   thumbnailImageKey: string
-  setThumbnaiImageKey: (thumbnailImageKey: string) => void
+  setThumbnailImageKey: (thumbnailImageKey: string) => void
   categories: Category[]
   setCategories: (categories: Category[]) => void
   onSubmit: (e: React.FormEvent) => void
@@ -34,7 +33,14 @@ export const PostForm: React.FC<Props> = ({
   onDelete,
 }) => {
 
-  const [ thumbnailImageKey, setThumbnailImageKey ] = useState('')
+  /**
+   * サムネイル画像のURL
+   * thumbnailImageKeyを元に、Supabaseから取得した画像のURLを格納する
+   * 画像がアップロードされるたびに、画像のURLを取得する
+   */
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(
+    null,
+  )
 
   const handleImageChange = async (
     event: ChangeEvent<HTMLInputElement>,
@@ -65,6 +71,26 @@ export const PostForm: React.FC<Props> = ({
     // data.pathに画像固有のkeyが入っているので、thumbnailImageKeyに格納する
     setThumbnailImageKey(data.path)
   }
+
+  // DBに保存しているthumbnailImageKeyを元に、Supabaseから画像のURLを取得
+  useEffect(() => {
+    if (!thumbnailImageKey) return
+
+    // Supabaseから画像のURLを取得する関数
+    const fetcher = async () => {
+      const {
+        data: { publicUrl },
+      } = await supabase.storage
+      // バケット名を指定して、画像のURLを取得
+      .from('post_thumbnail')
+      // 画像のkeyを指定
+      .getPublicUrl(thumbnailImageKey)
+
+      setThumbnailImageUrl(publicUrl)
+    }
+
+    fetcher()
+  }, [thumbnailImageKey])
 
 
   return (
@@ -108,10 +134,19 @@ export const PostForm: React.FC<Props> = ({
         <input
           type="file"
           id="thumbnailImageKey"
-          value={thumbnailUrl}
           onChange={handleImageChange}
           accept="image/*"
         />
+        {thumbnailImageUrl && (
+          <div className='mt-2'>
+            <Image
+              src={thumbnailImageUrl}
+              alt="thumbnail"
+              width={400}
+              height={400}
+            />
+          </div>
+        )}
       </div>
       <div>
         <label

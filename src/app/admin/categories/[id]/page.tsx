@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { CategoryForm } from '../_components/CategoryForm'
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 
 export default function Page() {
   // カテゴリー名の状態を管理
@@ -13,6 +14,7 @@ export default function Page() {
   const { id } = useParams()
   // ルーターを取得
   const router = useRouter()
+  const { token } = useSupabaseSession()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,6 +24,7 @@ export default function Page() {
       headers: {
         // リクエストヘッダーにContent-Typeを指定（リクエストボディがJSON形式であることを示す）
         'Content-Type': 'application/json',
+        Authorization: token!, // トークンをリクエストヘッダーに追加。!をつけることでnullまたはundefinedでないことを保証
       },
       // カテゴリー名をJSON形式でサーバーに送信
       // JSON.stringifyは、JavaScriptのオブジェクトや値をJSON文字列に変換する関数
