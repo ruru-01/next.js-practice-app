@@ -1,11 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/utils/supabase";
+import { supabase } from "@/utils/supabase";
 
 const prisma = new PrismaClient()
 
 export const GET = async (request: NextRequest) => {
-  const { currentUser, error } = await getCurrentUser(request)
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
   if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
@@ -39,17 +40,10 @@ export const GET = async (request: NextRequest) => {
   }
 }
 
-// 記事作成のリクエストボディの型
-interface CreatePostRequestBody {
-  title: string
-  content: string
-  categories: { id: number }[]
-  thumbnailImageKey: string
-}
-
 // POSTという命名にすることで、POSTリクエストの時にこの関数が呼ばれる
-export const POST = async (request: NextRequest, context: any) => {
-  const { currentUser, error } = await getCurrentUser(request)
+export const POST = async (request: NextRequest) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
   if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })

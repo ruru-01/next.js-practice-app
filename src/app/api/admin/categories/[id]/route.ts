@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from '@/utils/supabase'
+import { supabase } from "@/utils/supabase";
 
 const prisma = new PrismaClient()
 
@@ -8,11 +8,11 @@ export const GET = async (
   request: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const { currentUser, error } = await getCurrentUser(request)
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
-  if (error) {
+  if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
-  }
 
   const { id } = params
 
@@ -22,6 +22,10 @@ export const GET = async (
         id: parseInt(id),
       },
     })
+
+    if (!category) {
+      return NextResponse.json({ status: "Category not found" }, { status: 404 });
+    }
 
     return NextResponse.json({ status: 'OK', category }, { status: 200 })
   } catch (error) {
@@ -40,11 +44,11 @@ export const PUT = async (
   request: NextRequest,
   { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
 ) => {
-  const { currentUser, error } = await getCurrentUser(request)
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
-  if (error) {
+  if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
-  }
 
   // paramsの中にidが入っているため、それを取り出す
   const { id } = params
@@ -76,7 +80,8 @@ export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
 ) => {
-  const { currentUser, error } = await getCurrentUser(request)
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
   if(error) {
     return NextResponse.json({ status: error.message }, { status:400 })

@@ -12,14 +12,6 @@ export default function Page() {
   // ログインユーザーのセッション情報を取得
   const { token } = useSupabaseSession()
 
-  // Post型の定義
-  interface Post{
-    id: number;
-    title: string;
-    content: string;
-    createdAt: string;
-  }
-
   useEffect(() => {
     if (!token) return;
 

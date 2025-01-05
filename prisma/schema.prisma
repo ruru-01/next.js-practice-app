@@ -13,7 +13,7 @@ model Post {
   id             Int            @id @default(autoincrement())
   title          String
   content        String
-  thumbnailImageKey   String? // nullable に変更
+  thumbnailImageKey   String
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   postCategories PostCategory[]

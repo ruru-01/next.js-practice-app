@@ -32,6 +32,10 @@ export const PostForm: React.FC<Props> = ({
   onSubmit,
   onDelete,
 }) => {
+  // 状態変数と更新関数の定義
+  const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(
+    null,
+  )
 
   const handleImageChange = async (
     event: ChangeEvent<HTMLInputElement>,
@@ -41,6 +45,7 @@ export const PostForm: React.FC<Props> = ({
       return
     }
 
+    // eventから画像を取得する
     const file = event.target.files[0] // 選択された画像を取得
 
     const filePath = `private/${uuidv4()}` // ファイルパスを指定
@@ -62,11 +67,6 @@ export const PostForm: React.FC<Props> = ({
     // data.pathに画像固有のkeyが入っているので、thumbnailImageKeyに格納する
     setThumbnailImageKey(data.path)
   }
-
-    // Imageタグのsrcにセットする画像URLを持たせるstate
-    const [thumbnailImageUrl, setThumbnailImageUrl] = useState<null | string>(
-      null,
-    )
 
   // DBに保存しているthumbnailImageKeyを元に、Supabaseから画像のURLを取得
   useEffect(() => {
@@ -131,10 +131,9 @@ export const PostForm: React.FC<Props> = ({
           type="file"
           id="thumbnailImageKey"
           onChange={handleImageChange}
-          accept="image/*"
         />
         {thumbnailImageUrl && (
-          <div className='mt-2'>
+          <div className="mt-2">
             <Image
               src={thumbnailImageUrl}
               alt="thumbnail"
@@ -145,16 +144,12 @@ export const PostForm: React.FC<Props> = ({
         )}
       </div>
       <div>
-        <label
-          htmlFor="thumbnailUrl"
-          className="block text-sm font-medium text-gray-700"
-        >
+        <label className="block text-sm font-medium text-gray-700">
           カテゴリー
         </label>
         <CategoriesSelect
           selectedCategories={categories}
           setSelectedCategories={setCategories}
-          className="mt-1 block w-full rounded-md border border-gray-200 p-3"
         />
       </div>
       <button

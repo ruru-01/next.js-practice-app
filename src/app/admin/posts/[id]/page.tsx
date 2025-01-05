@@ -22,7 +22,7 @@ export default function Page() {
     // ページのデフォルトの動作をキャンセル
     e.preventDefault()
 
-    // 記事を作成する
+    // 記事を編集する
     await fetch(`/api/admin/posts/${id}`, {
       method: 'PUT',
       headers: {
@@ -41,7 +41,7 @@ export default function Page() {
   const handleDeletePost = async () => {
     if(!confirm('記事を削除しますか？')) return
 
-    await fetch(`/api/admin/categories/${id}`, {
+    await fetch(`/api/admin/posts/${id}`, {
       method: 'DELETE',
       headers: {
         Authorization: token!,
@@ -59,7 +59,7 @@ export default function Page() {
     if (!token) return;
 
     const fetcher = async () => {
-      const res = await fetch(`/api/admin/categories/${id}`, {
+      const res = await fetch(`/api/admin/posts/${id}`, {
         headers: {
           Authorization: token,
           "Content-Type": "application/json",

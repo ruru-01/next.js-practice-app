@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentUser } from "@/utils/supabase";
+import { supabase } from "@/utils/supabase";
 
 const prisma = new PrismaClient()
 
@@ -8,7 +8,8 @@ export const GET = async (
   request: NextRequest,
   { params }: { params: { id: string } },
 ) => {
-  const { currentUser, error } = await getCurrentUser(request)
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
   if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
@@ -41,20 +42,13 @@ export const GET = async (
   }
 }
 
-// 記事の更新時に送られてくるリクエストのbodyの型
-interface UpdatePostRequestBody {
-  title: string
-  content: string
-  categories: { id: number }[]
-  thumbnailImageKey: string
-}
-
 // PUTという命名にすることで、PUTリクエストの時にこの関数が呼ばれる
 export const PUT = async (
   request: NextRequest,
   { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
 ) => {
-  const { currentUser, error } = await getCurrentUser(request)
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
   if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
@@ -102,7 +96,8 @@ export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
 ) => {
-  const { currentUser, error } = await getCurrentUser(request)
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
 
   if (error)
     return NextResponse.json({ status: error.message }, { status: 400 })
