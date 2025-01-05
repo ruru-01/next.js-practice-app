@@ -4,13 +4,16 @@ import Link from 'next/link'
 import React from 'react'
 import { supabase } from '@/utils/supabase'
 import { useSupabaseSession } from '../_hooks/useSupabaseSession'
+import { useRouter } from 'next/navigation'
 
 export const Header: React.FC = () => {
+  // useRouterを初期化
+  const router = useRouter()
   // ログアウト処理
   const handleLogout = async () => {
     // ログアウト処理。ログアウト後はトップページに遷移
     await supabase.auth.signOut()
-    window.location.href = '/'
+    router.push('/')
   }
 
   // セッション情報とローディング状態を取得
