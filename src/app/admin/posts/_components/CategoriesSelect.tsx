@@ -1,18 +1,18 @@
 import * as React from 'react'
+import Box from '@mui/material/Box'
+import OutlinedInput from '@mui/material/OutlinedInput'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Select from '@mui/material/Select'
+import Chip from '@mui/material/Chip'
 import { Category } from '@/types/Category'
 import { useEffect } from 'react'
-import { FormControl } from '@mui/material';
-import { OutlinedInput } from '@mui/material';
-import { Select } from '@mui/material';
-import { Box } from '@mui/material';
-import { Chip } from '@mui/material';
-import { MenuItem } from '@mui/material';
 
 interface Props {
   // 選択されたカテゴリー
-  selectedCategories: Category[];
+  selectedCategories: Category[]
   // カテゴリーが選択されたときに呼び出される関数
-  setSelectedCategories: (categoried: Category[]) => void;
+  setSelectedCategories: (categories: Category[]) => void
   className?: string;
 }
 
@@ -20,34 +20,33 @@ interface Props {
 export const CategoriesSelect: React.FC<Props> = ({
   selectedCategories,
   setSelectedCategories,
-  className,
+  className
 }) => {
   // カテゴリーの一覧
   // ここではダミーデータを使っているが、実際にはAPIから取得する
-  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [categories, setCategories] = React.useState<Category[]>([])
 
   // カテゴリーを取得
   const handleChange = (value: number[]) => {
     // 選択されたカテゴリーを取得
-    value.forEach((value: number) => {
+    value.forEach((v: number) => {
       // 選択されたカテゴリーがすでに選択されているかチェック
-      const isSelect = selectedCategories.some((category) => category.id === value);
+      const isSelect = selectedCategories.some((c) => c.id === v)
       if (isSelect) {
-        setSelectedCategories(selectedCategories.filter((category) => category.id !== value))
-        // 選択されている場合は何もしない
+        setSelectedCategories(selectedCategories.filter((c) => c.id !== v))
         return
       }
 
-      const category = categories.find((category) => category.id === value); // 選択されたカテゴリーを取得
+      const category = categories.find((c) => c.id === v) // 選択されたカテゴリーを取得
       if (!category) return // カテゴリーが見つからない場合は何もしない
-      setSelectedCategories([...selectedCategories, category]); // 選択されたカテゴリーを追加
+      setSelectedCategories([...selectedCategories, category]) // 選択されたカテゴリーを追加
     })
   }
 
   // コンポーネントがマウントされたときに一度だけ実行される
   useEffect(() => {
     const fetcher = async () => { // 非同期関数として定義されており、APIからカテゴリーを取得する
-      const res = await fetch('/api/categories')
+      const res = await fetch('/api/admin/categories')
       const { categories } = await res.json() // レスポンスをJSON形式に変換
       setCategories(categories)
     }
@@ -84,4 +83,4 @@ export const CategoriesSelect: React.FC<Props> = ({
       </Select>
     </FormControl>
   )
-  }
+}

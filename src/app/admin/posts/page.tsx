@@ -1,32 +1,35 @@
 // 記事一覧ページ admin/posts
 'use client';
 
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession';
 import Link from 'next/link'
 import { useEffect, useState } from "react";
+import { Post } from '@/types/post';
 
 export default function Page() {
   const [ posts, setPosts ] = useState<Post[]>([]);
   const [ isLoading, setIsLoading ] = useState(true);
-
-  // Post型の定義
-  interface Post{
-    id: number;
-    title: string;
-    content: string;
-    createdAt: string;
-  }
+  // ログインユーザーのセッション情報を取得
+  const { token } = useSupabaseSession()
 
   useEffect(() => {
+    if (!token) return;
+
     const fetcher = async () => {
       setIsLoading(true) // ローディング開始
-      const res = await fetch('/api/admin/posts')
+      const res = await fetch('/api/admin/posts', {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token, // トークンをリクエストヘッダーに追加
+        },
+      })
       const { posts } = await res.json()
-      setPosts(posts) //記事データをセット
+      setPosts([...posts]) //記事データをセット。状態の更新は非同期で行われるため、スプレッド構文を使用して新しい配列を生成
       setIsLoading(false) // ローディング終了
     }
 
     fetcher()
-  }, []);
+  }, [token]);
 
   if(isLoading) {
     return <p>読み込み中...</p>

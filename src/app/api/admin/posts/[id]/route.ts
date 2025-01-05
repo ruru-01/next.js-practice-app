@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { supabase } from "@/utils/supabase";
 
 const prisma = new PrismaClient()
 
@@ -7,6 +8,12 @@ export const GET = async (
   request: NextRequest,
   { params }: { params: { id: string } },
 ) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
+
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 400 })
+
   const { id } = params
 
   try {
@@ -28,6 +35,11 @@ export const GET = async (
       },
     })
 
+     // 見つからなかった場合、404エラーを返す
+     if (!post) {
+      return NextResponse.json({ status: "Post not found" }, { status:404 })
+    }
+
     return NextResponse.json({ status: 'OK', post: post }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
@@ -35,24 +47,22 @@ export const GET = async (
   }
 }
 
-// 記事の更新時に送られてくるリクエストのbodyの型
-interface UpdatePostRequestBody {
-  title: string
-  content: string
-  categories: { id: number }[]
-  thumbnailUrl: string
-}
-
 // PUTという命名にすることで、PUTリクエストの時にこの関数が呼ばれる
 export const PUT = async (
   request: NextRequest,
   { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
 ) => {
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
+
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 400 })
+
   // paramsの中にidが入っているため、それを取り出す
   const { id } = params
 
   // リクエストのbodyを取得
-  const { title, content, categories, thumbnailUrl }: UpdatePostRequestBody = await request.json()
+  const { title, content, categories, thumbnailImageKey } = await request.json()
 
   try {
     // idを指定して、Postを更新
@@ -63,7 +73,7 @@ export const PUT = async (
       data: {
         title,
         content,
-        thumbnailUrl,
+        thumbnailImageKey,
       },
     })
 
@@ -82,7 +92,7 @@ export const PUT = async (
     return NextResponse.json({ status: 'OK', post: post }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
-      return NextResponse.json({ status: error.message }, { status:400 })
+      return NextResponse.json({ status: error.message }, { status: 400 })
   }
 }
 
@@ -91,11 +101,17 @@ export const DELETE = async (
   request: NextRequest,
   { params }: { params: { id: string } }, // ここでリクエストパラメータを受け取る
 ) => {
-  // paramsの中にidが入っているため、それを取り出す
+  const token = request.headers.get("Authorization") ?? "";
+  const { error } = await supabase.auth.getUser(token);
+
+  if (error)
+    return NextResponse.json({ status: error.message }, { status: 400 })
+
+  // paramsの中にidが入っているので、それを取り出す
   const { id } = params
 
   try {
-    // idを指定してPostを削除
+    // idを指定して、Postを削除
     await prisma.post.delete({
       where: {
         id: parseInt(id),

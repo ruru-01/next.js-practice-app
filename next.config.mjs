@@ -4,7 +4,8 @@ const nextConfig = {
         remotePatterns: [
           { protocol: 'https', hostname: 'placehold.jp' },
           { protocol: 'https', hostname: 'images.microcms-assets.io' },
-          { protocol: 'http', hostname: 'example.com' }
+          { protocol: 'http', hostname: 'example.com' },
+          { protocol: 'https', hostname: 'ybvmvakzxqodivnojebr.supabase.co' },
         ],
       },
     };

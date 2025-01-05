@@ -5,10 +5,12 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation';
 import { CategoryForm } from '../_components/CategoryForm'
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession';
 
 export default function Page() {
   const [name, setName] = useState('')
   const router = useRouter()
+  const { token } = useSupabaseSession()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -18,6 +20,7 @@ export default function Page() {
       headers: {
         // リクエストヘッダーにContent-Typeを指定（リクエストボディがJSON形式であることを示す）
         'Content-Type': 'application/json',
+        Authorization: token!, // トークンをリクエストヘッダーに追加。!をつけることでnullまたはundefinedでないことを保証
       },
       body: JSON.stringify({ name }),
     })

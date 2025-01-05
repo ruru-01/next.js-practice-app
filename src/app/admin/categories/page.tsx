@@ -5,21 +5,31 @@
 import { Category } from '@prisma/client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useSupabaseSession } from '@/app/_hooks/useSupabaseSession'
 
 export default function Page() {
   const [categories, setCategories] = useState<Category[]>([])
   const [ isLoading, setIsLoading ] = useState(true);
+  const { token } = useSupabaseSession()
 
   useEffect(() => {
+    // トークンがない場合は処理を中断
+    if (!token) return;
+
     const fetcher = async () => {
       setIsLoading(true) // ローディング開始
-      const res = await fetch('/api/admin/categories')
+      const res = await fetch('/api/admin/categories', {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token, // トークンをリクエストヘッダーに追加
+        },
+      });
       const { categories } = await res.json()
       setCategories(categories); // カテゴリーデータをセット
       setIsLoading(false) // ローディング終了
     }
     fetcher()
-  }, [])
+  }, [token])
 
   if (isLoading) {
     return <p>読み込み中...</p>
