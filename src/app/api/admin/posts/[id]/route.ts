@@ -35,6 +35,11 @@ export const GET = async (
       },
     })
 
+     // 見つからなかった場合、404エラーを返す
+     if (!post) {
+      return NextResponse.json({ status: "Post not found" }, { status:404 })
+    }
+
     return NextResponse.json({ status: 'OK', post: post }, { status: 200 })
   } catch (error) {
     if (error instanceof Error)
